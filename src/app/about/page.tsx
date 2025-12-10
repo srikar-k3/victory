@@ -1,5 +1,6 @@
 // About page
 import Newsletter from "@/components/Newsletter";
+import Image from "next/image";
 
 export default function AboutPage() {
   return (
@@ -30,7 +31,16 @@ export default function AboutPage() {
               </p>
             </div>
             <div>
-              <div className="media aspect-[4/3]" />
+              <div className="relative rounded-md overflow-hidden aspect-[4/3]">
+                <Image
+                  src="/about_prev.jpeg"
+                  alt="About Victory in Volumes"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -41,13 +51,22 @@ export default function AboutPage() {
       {/* Mission Statement (feature row format from Home) */}
       <section id="mission" className="section section-main surface scroll-mt-24">
         <div className="inner grid items-center md:grid-cols-2 gap-[calc(var(--g2)*2)] md:gap-[calc(var(--g3)*2)]">
-          <div className="media aspect-[4/3]" />
+          <div className="relative rounded-md overflow-hidden aspect-[4/3] bg-[var(--c-secondary)]">
+            <Image
+              src="/Artboard 25.png"
+              alt="Mission collage"
+              fill
+              className="object-contain scale-125"
+              sizes="(min-width: 768px) 50vw, 100vw"
+              priority
+            />
+          </div>
           <div className="stack-split">
             <h2 className="h2 font-semibold">Mission Statement</h2>
             <p className="text-body text-neutral-700 prose-measure">
               Victory in Volumes exists to bring communities together in support of women’s health and well‑being. Through collective voices, shared resources, and compassionate action, we strive to empower women, address their unique needs, and create lasting impact that uplifts individuals, families, and communities alike.
             </p>
-            <a href="/contact" className="btn btn-primary w-fit">Donate</a>
+            <a href="/contact" className="btn btn-primary w-fit">Donate (coming soon)</a>
           </div>
         </div>
       </section>
@@ -60,7 +79,16 @@ export default function AboutPage() {
             {/* Member 1 */}
             <div className="rounded-xl border border-neutral-200 p-4">
               <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-4 items-start">
-                <div className="rounded-md bg-neutral-200 h-48 sm:h-56" />
+                <div className="relative rounded-md overflow-hidden h-48 sm:h-56">
+                  <Image
+                    src="/adi.JPG"
+                    alt="Advaitha Kamalakkanan portrait"
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 640px) 160px, 100vw"
+                    priority
+                  />
+                </div>
                 <div className="grid gap-2">
                   <div>
                     <h3 className="font-medium">Advaitha Kamalakkanan</h3>
@@ -94,7 +122,15 @@ export default function AboutPage() {
             {/* Member 2 */}
             <div className="rounded-xl border border-neutral-200 p-4">
               <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-4 items-start">
-                <div className="rounded-md bg-neutral-200 h-48 sm:h-56" />
+                <div className="relative rounded-md overflow-hidden h-48 sm:h-56">
+                  <Image
+                    src="/kaitlyn.jpeg"
+                    alt="Kaitlyn Victor portrait"
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 640px) 160px, 100vw"
+                  />
+                </div>
                 <div className="grid gap-2">
                   <div>
                     <h3 className="font-medium">Kaitlyn Victor</h3>

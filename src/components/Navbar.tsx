@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -28,10 +29,20 @@ export default function Navbar() {
     <header className={`sticky top-0 z-50 header-primary`}>
       <nav className="site-header page-x">
         <div className="inner w-full flex items-center justify-between h-full">
-        {/* Left: logo placeholder square */}
+        {/* Left: logo */}
         <Link href="/" className="flex items-center gap-2" aria-label="Home">
-          <span aria-hidden className="inline-block w-8 h-8 rounded-md bg-neutral-200" />
-          <span className="hidden sm:inline text-sm font-medium tracking-wide">
+          <span className="relative inline-block w-8 h-8 shrink-0">
+            <Image
+              src="/profile-picture.png"
+              alt="Victory logo"
+              fill
+              sizes="32px"
+              className="rounded-md object-cover"
+              priority
+              unoptimized
+            />
+          </span>
+          <span className="hidden sm:inline text-sm font-medium tracking-wide text-accent">
             VICTORY IN VOLUMES
           </span>
         </Link>
@@ -66,7 +77,7 @@ export default function Navbar() {
               );
             })}
           </ul>
-          <Link href="/contact" className="btn btn-donate text-body-sm leading-none inline-flex items-center self-center">Donate</Link>
+          <Link href="/contact" className="btn btn-donate text-body-sm leading-none inline-flex items-center self-center">Donate (coming soon)</Link>
         </div>
         </div>
       </nav>
@@ -94,7 +105,7 @@ export default function Navbar() {
             })}
             <li>
               <Link href="/contact" className="btn btn-donate w-full" onClick={() => setOpen(false)}>
-                Donate
+                Donate (coming soon)
               </Link>
             </li>
           </ul>

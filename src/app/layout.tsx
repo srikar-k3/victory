@@ -11,6 +11,11 @@ const sora = Sora({ subsets: ["latin"], display: "swap", variable: "--font-sora"
 export const metadata: Metadata = {
   title: "Victory",
   description: "Empowering women. Strengthening communities.",
+  icons: {
+    icon: "/profile-picture.png",
+    shortcut: "/profile-picture.png",
+    apple: "/profile-picture.png",
+  },
 };
 
 export default function RootLayout({
