@@ -11,7 +11,8 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "next": "15.5.4",
+    "nodemailer": "^7.0.12",
+    "next": "15.5.9",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },

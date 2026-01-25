@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Ensure server-only deps like nodemailer are resolved externally
+  // and not bundled by Turbopack.
+  serverExternalPackages: ["nodemailer"],
 };
 
 export default nextConfig;
