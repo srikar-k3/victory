@@ -36,8 +36,9 @@ export default function ContactForm() {
 
       setStatus({ type: 'success' });
       form.reset();
-    } catch (err: any) {
-      setStatus({ type: 'error', message: err?.message || 'Failed to send message' });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to send message';
+      setStatus({ type: 'error', message });
     }
   }
 
