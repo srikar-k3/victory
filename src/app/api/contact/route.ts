@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 export const runtime = "nodejs"; // ensure Node runtime for SMTP
 export const dynamic = "force-dynamic"; // avoid CDN caching
 
-// Helpers similar to working srikar-portfolio implementation
+// Helpers identical to portfolio: read runtime env only
 function missing(...keys: Array<keyof NodeJS.ProcessEnv>) {
   const miss = keys.filter((k) => !process.env[k]);
   return miss.length ? miss : null;
@@ -98,9 +98,6 @@ export async function POST(req: Request) {
     const CONTACT_TO = (process.env.CONTACT_TO as string | undefined) || SMTP_USER || "victoryinvolumes@gmail.com";
     const FROM_EMAIL = (process.env.SMTP_FROM as string | undefined) || SMTP_USER || `no-reply@${SMTP_HOST}`;
 
-    // Lazy import to keep on server only
-    const { default: nodemailer } = await import("nodemailer");
-
     const commonOpts = {
       host: SMTP_HOST,
       auth: { user: SMTP_USER, pass: SMTP_PASS },
@@ -154,7 +151,7 @@ export async function POST(req: Request) {
 
     try {
       await primary.sendMail(mail);
-    } catch (e) {
+    } catch {
       // Fallback to 587 STARTTLS (some environments block 465)
       const fallback = nodemailer.createTransport({
         ...commonOpts,
