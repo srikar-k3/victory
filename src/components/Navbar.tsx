@@ -16,7 +16,10 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const [hash, setHash] = useState<string>("");
-  const [alpha, setAlpha] = useState(1); // 0 = transparent, 1 = solid
+  const [alpha, setAlpha] = useState(() => {
+    if (typeof window !== "undefined" && window.location.pathname === "/" && window.scrollY <= 2) return 0;
+    return 1;
+  }); // 0 = transparent, 1 = solid
 
   // Track URL hash for active nav state
   useEffect(() => {
@@ -48,8 +51,15 @@ export default function Navbar() {
     const headerH = headerEl ? Math.round((headerEl as HTMLElement).getBoundingClientRect().height) : 64;
     const obs = new IntersectionObserver(
       ([entry]) => {
-        const ratio = entry.intersectionRatio;
-        const next = 1 - Math.min(1, Math.max(0, ratio));
+        const ratio = entry.intersectionRatio; // 0..1 visible portion of hero
+        const start = 0.5; // keep fully transparent until 50% of hero remains
+        let next = 0;
+        if (ratio >= start) {
+          next = 0;
+        } else {
+          // Map ratio [start..0] to alpha [0..1]
+          next = Math.min(1, Math.max(0, (start - ratio) / start));
+        }
         setAlpha(next);
       },
       { rootMargin: `-${headerH}px 0px 0px 0px`, threshold: thresholds }

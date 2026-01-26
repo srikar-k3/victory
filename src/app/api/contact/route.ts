@@ -43,17 +43,27 @@ export async function GET() {
   );
 }
 
+type ContactBody = {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+};
+
 export async function POST(req: Request) {
   try {
     // Parse both JSON and form posts
     const contentType = req.headers.get("content-type") || "";
     const isJson = contentType.includes("application/json");
-    const body: any = isJson ? await req.json().catch(() => ({})) : Object.fromEntries((await req.formData()).entries());
+    const raw = (isJson
+      ? await req.json().catch(() => ({}))
+      : Object.fromEntries((await req.formData()).entries())) as unknown;
+    const body = raw as ContactBody;
 
-    const name = String(body?.name || "").trim();
-    const email = String(body?.email || "").trim();
-    const subject = String(body?.subject || "").trim();
-    const message = String(body?.message || "").trim();
+    const name = String(body?.name ?? "").trim();
+    const email = String(body?.email ?? "").trim();
+    const subject = String(body?.subject ?? "").trim();
+    const message = String(body?.message ?? "").trim();
 
     if (!name || !email || !subject || !message) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -65,16 +75,13 @@ export async function POST(req: Request) {
     }
 
     // Read env at runtime (works on AWS like portfolio)
-    const secretBag = (process as unknown as { env?: { secrets?: Record<string, string> } })?.env?.secrets || {};
-    const ENV = (k: string) => process.env[k] ?? (secretBag as Record<string, string>)[k];
-
-    const SMTP_HOST = ENV("SMTP_HOST") as string;
-    const SMTP_PORT = Number(ENV("SMTP_PORT"));
-    const SMTP_USER = ENV("SMTP_USER") as string;
-    const SMTP_PASS = ENV("SMTP_PASS") as string;
-    const SMTP_SECURE = boolFromEnv(ENV("SMTP_SECURE") as string | undefined, SMTP_PORT === 465);
-    const CONTACT_TO = (ENV("CONTACT_TO") as string | undefined) || SMTP_USER || "victoryinvolumes@gmail.com";
-    const FROM_EMAIL = (ENV("SMTP_FROM") as string | undefined) || SMTP_USER || `no-reply@${SMTP_HOST}`;
+    const SMTP_HOST = process.env.SMTP_HOST as string;
+    const SMTP_PORT = Number(process.env.SMTP_PORT);
+    const SMTP_USER = process.env.SMTP_USER as string;
+    const SMTP_PASS = process.env.SMTP_PASS as string;
+    const SMTP_SECURE = boolFromEnv(process.env.SMTP_SECURE, SMTP_PORT === 465);
+    const CONTACT_TO = (process.env.CONTACT_TO as string | undefined) || SMTP_USER || "victoryinvolumes@gmail.com";
+    const FROM_EMAIL = (process.env.SMTP_FROM as string | undefined) || SMTP_USER || `no-reply@${SMTP_HOST}`;
 
     // Lazy import to keep on server only
     const { default: nodemailer } = await import("nodemailer");
@@ -95,7 +102,7 @@ export async function POST(req: Request) {
       ...commonOpts,
       port: SMTP_PORT,
       secure: SMTP_SECURE,
-    } as any);
+    });
 
     const mailSubject = `[Victory] ${subject}`;
     const text = `New message from Victory contact form\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
@@ -117,7 +124,7 @@ export async function POST(req: Request) {
       text,
       html,
       replyTo: email,
-    } as any;
+    };
 
     try {
       await primary.sendMail(mail);
@@ -128,7 +135,7 @@ export async function POST(req: Request) {
         port: 587,
         secure: false,
         requireTLS: true,
-      } as any);
+      });
       await fallback.sendMail(mail);
     }
 

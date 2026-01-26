@@ -7,9 +7,13 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section id="hero" className="section section-hero section-hero-xl scroll-mt-24 relative overflow-hidden">
+      <section id="hero" className="section section-hero section-hero-xl scroll-mt-24 relative">
         {/* Background extends behind sticky header without shifting content */}
-        <div className="absolute left-0 right-0 -top-[var(--header-h)] h-[calc(100%+var(--header-h))] pointer-events-none" aria-hidden>
+        <div
+          className="absolute left-0 right-0 pointer-events-none"
+          style={{ top: "calc(var(--header-h) * -1)", height: "calc(100% + var(--header-h))" }}
+          aria-hidden
+        >
           <div className="absolute inset-0">
             <Image
               src="/hero_background.png"
