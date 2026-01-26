@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Minimal stub to satisfy TypeScript during build on hosts
 // where @types/nodemailer isn't installed. We only import the
 // default export and call createTransport in server code.
@@ -12,4 +13,3 @@ declare module 'nodemailer' {
   };
   export default _default;
 }
-

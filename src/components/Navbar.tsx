@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 
 const navItems = [
@@ -68,8 +68,10 @@ export default function Navbar() {
     return () => obs.disconnect();
   }, [pathname]);
 
+  const headerStyle = { "--header-alpha": String(alpha) } as CSSProperties;
+
   return (
-    <header className={`sticky top-0 z-50 header-dynamic`} style={{ ['--header-alpha' as any]: alpha }}>
+    <header className={`sticky top-0 z-50 header-dynamic`} style={headerStyle}>
       <nav className="site-header page-x">
         <div className="inner w-full flex items-center justify-between h-full">
         {/* Left: logo */}

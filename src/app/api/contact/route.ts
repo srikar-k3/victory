@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs"; // ensure Node runtime for SMTP
@@ -48,6 +49,9 @@ type ContactBody = {
   email?: string;
   subject?: string;
   message?: string;
+  workType?: string;
+  timeframe?: string;
+  comments?: string;
 };
 
 export async function POST(req: Request) {
@@ -62,11 +66,22 @@ export async function POST(req: Request) {
 
     const name = String(body?.name ?? "").trim();
     const email = String(body?.email ?? "").trim();
-    const subject = String(body?.subject ?? "").trim();
+    let subject = String(body?.subject ?? "").trim();
     const message = String(body?.message ?? "").trim();
+    const workType = String(body?.workType ?? "").trim();
+    const timeframe = String(body?.timeframe ?? "").trim();
+    const comments = String(body?.comments ?? "").trim();
 
-    if (!name || !email || !subject || !message) {
+    if (!name || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+    // Accept either (subject+message) or (workType/timeframe/comments)
+    const usingPortfolioFields = !subject && !message && (workType || timeframe || comments);
+    if (!usingPortfolioFields && (!subject || !message)) {
+      return NextResponse.json({ error: "Missing subject or message" }, { status: 400 });
+    }
+    if (usingPortfolioFields) {
+      subject = `Portfolio Contact — ${workType || "General"}`;
     }
 
     const miss = missing("SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS");
@@ -105,8 +120,19 @@ export async function POST(req: Request) {
     });
 
     const mailSubject = `[Victory] ${subject}`;
-    const text = `New message from Victory contact form\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
-    const html = `
+    const text = usingPortfolioFields
+      ? `Name: ${name}\nEmail: ${email}\nType of Work: ${workType || ""}\nTimeframe: ${timeframe || ""}\n\nAdditional Comments:\n${comments || "(none)"}`
+      : `New message from Victory contact form\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
+    const html = usingPortfolioFields
+      ? `
+      <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+      <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+      <p><strong>Type of Work:</strong> ${escapeHtml(workType || "")}</p>
+      <p><strong>Timeframe:</strong> ${escapeHtml(timeframe || "")}</p>
+      <p><strong>Additional Comments:</strong></p>
+      <p>${escapeHtml(comments || "(none)").replace(/\n/g, '<br/>')}</p>
+    `
+      : `
       <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-size: 16px; color: #111;">
         <p>New message from Victory contact form</p>
         <p><strong>Name:</strong> ${escapeHtml(name)}</p>
