@@ -18,7 +18,18 @@ export default function ContactForm() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const payload = Object.fromEntries(formData.entries());
+    const name = String(formData.get('name') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const subject = String(formData.get('subject') || '').trim();
+    const message = String(formData.get('message') || '').trim();
+    // Portfolio API expects workType/timeframe/comments. Map our fields accordingly.
+    const payload = {
+      name,
+      email,
+      workType: subject,
+      timeframe: '',
+      comments: message,
+    };
 
     try {
       const res = await fetch('/api/contact', {
