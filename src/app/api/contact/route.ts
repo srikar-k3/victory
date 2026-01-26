@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { SERVER_ENV } from "@/lib/serverEnv";
 
 export const runtime = "nodejs"; // ensure Node runtime for SMTP
+export const dynamic = "force-dynamic"; // avoid CDN caching
 
 // Simple validation helper
 function isNonEmptyString(value: unknown): value is string {
@@ -44,22 +46,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    // Config from env (Amplify note: secrets may be provided under process.env.secrets)
-    const fromEnv = (key: string): string | undefined => {
-      const val = process.env[key];
-      if (val) return val;
-      // Some Amplify setups expose SSM secrets at process.env.secrets
-      const anyProcess = process as unknown as { env?: { secrets?: Record<string, string> } };
-      return anyProcess?.env?.secrets?.[key];
-    };
-
-    const SMTP_HOST = fromEnv("SMTP_HOST");
-    const SMTP_PORT = Number(fromEnv("SMTP_PORT") || 587);
-    const SMTP_USER = fromEnv("SMTP_USER");
-    const SMTP_PASS = fromEnv("SMTP_PASS");
-    const SMTP_SECURE = String(fromEnv("SMTP_SECURE") || "false").toLowerCase() === "true" || SMTP_PORT === 465;
-    const CONTACT_TO = fromEnv("CONTACT_TO") || "victoryinvolumes@gmail.com";
-    const FROM_EMAIL = fromEnv("SMTP_FROM") || SMTP_USER || `no-reply@${SMTP_HOST ?? "localhost"}`;
+    // Config captured at build time (works on Amplify when using Hosting env vars)
+    const SMTP_HOST = SERVER_ENV.SMTP_HOST;
+    const SMTP_PORT = Number(SERVER_ENV.SMTP_PORT || 587);
+    const SMTP_USER = SERVER_ENV.SMTP_USER;
+    const SMTP_PASS = SERVER_ENV.SMTP_PASS;
+    const SMTP_SECURE = String(SERVER_ENV.SMTP_SECURE || "false").toLowerCase() === "true" || SMTP_PORT === 465;
+    const CONTACT_TO = SERVER_ENV.CONTACT_TO || "victoryinvolumes@gmail.com";
+    const FROM_EMAIL = SERVER_ENV.SMTP_FROM || SMTP_USER || `no-reply@${SMTP_HOST ?? "localhost"}`;
 
     const missing: string[] = [];
     if (!SMTP_HOST) missing.push("SMTP_HOST");

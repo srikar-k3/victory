@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { SERVER_ENV } from "@/lib/serverEnv";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const secretBag = (process as unknown as { env?: { secrets?: Record<string, string> } })?.env?.secrets;
@@ -21,6 +23,13 @@ export async function GET() {
       SMTP_PASS: safe("SMTP_PASS"),
       SMTP_PORT: process.env.SMTP_PORT ?? secretBag?.SMTP_PORT ?? null,
       SMTP_SECURE: process.env.SMTP_SECURE ?? secretBag?.SMTP_SECURE ?? null,
+    },
+    buildCaptured: {
+      HOST: Boolean(SERVER_ENV.SMTP_HOST),
+      USER: Boolean(SERVER_ENV.SMTP_USER),
+      PASS: Boolean(SERVER_ENV.SMTP_PASS),
+      PORT: SERVER_ENV.SMTP_PORT ?? null,
+      SECURE: SERVER_ENV.SMTP_SECURE ?? null,
     },
   });
 }
