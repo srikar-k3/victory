@@ -8,17 +8,20 @@ export default function Home() {
     <div>
       {/* Hero */}
       <section id="hero" className="section section-hero section-hero-xl scroll-mt-24 relative overflow-hidden">
-        {/* Background image */}
-        <Image
-          src="/hero_background.png"
-          alt=""
-          fill
-          priority
-          className="object-cover object-center select-none"
-          sizes="100vw"
-        />
-        {/* Color overlay for legibility */}
-        <div className="absolute inset-0 bg-[var(--c-primary)]/60" aria-hidden />
+        {/* Background extends behind sticky header without shifting content */}
+        <div className="absolute left-0 right-0 -top-[var(--header-h)] h-[calc(100%+var(--header-h))] pointer-events-none" aria-hidden>
+          <div className="absolute inset-0">
+            <Image
+              src="/hero_background.png"
+              alt=""
+              fill
+              priority
+              className="object-cover object-center select-none"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-[var(--c-primary)]/60" />
+          </div>
+        </div>
         <div className="inner max-w-3xl center-prose stack stack-loose text-[var(--c-light)] relative">
           <h1 className="h1 font-semibold text-[var(--c-light)]">Empowering women. Strengthening communities.</h1>
         </div>

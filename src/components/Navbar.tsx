@@ -16,7 +16,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const [hash, setHash] = useState<string>("");
-  const [onHero, setOnHero] = useState(false);
+  const [alpha, setAlpha] = useState(1); // 0 = transparent, 1 = solid
 
   // Track URL hash for active nav state
   useEffect(() => {
@@ -28,29 +28,38 @@ export default function Navbar() {
     }
   }, []);
 
-  // Observe the hero on the home page to toggle transparent header
+  // Observe the hero on the home page to drive a smooth fade
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (pathname !== "/") {
-      setOnHero(false);
+      setAlpha(1);
       return;
     }
     const hero = document.getElementById("hero");
     if (!hero) {
-      setOnHero(false);
+      setAlpha(1);
       return;
     }
+    // Set an initial value right away to avoid a white flash
+    if (window.scrollY <= 2) setAlpha(0);
+
+    const thresholds = Array.from({ length: 21 }, (_, i) => i / 20);
+    const headerEl = document.querySelector("header");
+    const headerH = headerEl ? Math.round((headerEl as HTMLElement).getBoundingClientRect().height) : 64;
     const obs = new IntersectionObserver(
-      ([entry]) => setOnHero(entry.isIntersecting),
-      { rootMargin: "-64px 0px 0px 0px", threshold: 0.01 }
+      ([entry]) => {
+        const ratio = entry.intersectionRatio;
+        const next = 1 - Math.min(1, Math.max(0, ratio));
+        setAlpha(next);
+      },
+      { rootMargin: `-${headerH}px 0px 0px 0px`, threshold: thresholds }
     );
     obs.observe(hero);
     return () => obs.disconnect();
   }, [pathname]);
 
-  const headerTone = onHero ? "header-transparent" : "header-primary";
   return (
-    <header className={`sticky top-0 z-50 ${headerTone}`}>
+    <header className={`sticky top-0 z-50 header-dynamic`} style={{ ['--header-alpha' as any]: alpha }}>
       <nav className="site-header page-x">
         <div className="inner w-full flex items-center justify-between h-full">
         {/* Left: logo */}

@@ -65,13 +65,16 @@ export async function POST(req: Request) {
     }
 
     // Read env at runtime (works on AWS like portfolio)
-    const SMTP_HOST = process.env.SMTP_HOST as string;
-    const SMTP_PORT = Number(process.env.SMTP_PORT);
-    const SMTP_USER = process.env.SMTP_USER as string;
-    const SMTP_PASS = process.env.SMTP_PASS as string;
-    const SMTP_SECURE = boolFromEnv(process.env.SMTP_SECURE, SMTP_PORT === 465);
-    const CONTACT_TO = (process.env.CONTACT_TO as string | undefined) || SMTP_USER || "victoryinvolumes@gmail.com";
-    const FROM_EMAIL = (process.env.SMTP_FROM as string | undefined) || SMTP_USER || `no-reply@${SMTP_HOST}`;
+    const secretBag = (process as unknown as { env?: { secrets?: Record<string, string> } })?.env?.secrets || {};
+    const ENV = (k: string) => process.env[k] ?? (secretBag as Record<string, string>)[k];
+
+    const SMTP_HOST = ENV("SMTP_HOST") as string;
+    const SMTP_PORT = Number(ENV("SMTP_PORT"));
+    const SMTP_USER = ENV("SMTP_USER") as string;
+    const SMTP_PASS = ENV("SMTP_PASS") as string;
+    const SMTP_SECURE = boolFromEnv(ENV("SMTP_SECURE") as string | undefined, SMTP_PORT === 465);
+    const CONTACT_TO = (ENV("CONTACT_TO") as string | undefined) || SMTP_USER || "victoryinvolumes@gmail.com";
+    const FROM_EMAIL = (ENV("SMTP_FROM") as string | undefined) || SMTP_USER || `no-reply@${SMTP_HOST}`;
 
     // Lazy import to keep on server only
     const { default: nodemailer } = await import("nodemailer");
