@@ -15,7 +15,10 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const [hash, setHash] = useState<string>("" );
+  const [hash, setHash] = useState<string>("");
+  const [onHero, setOnHero] = useState(false);
+
+  // Track URL hash for active nav state
   useEffect(() => {
     const update = () => setHash(typeof window !== "undefined" ? window.location.hash : "");
     update();
@@ -25,8 +28,29 @@ export default function Navbar() {
     }
   }, []);
 
+  // Observe the hero on the home page to toggle transparent header
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (pathname !== "/") {
+      setOnHero(false);
+      return;
+    }
+    const hero = document.getElementById("hero");
+    if (!hero) {
+      setOnHero(false);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => setOnHero(entry.isIntersecting),
+      { rootMargin: "-64px 0px 0px 0px", threshold: 0.01 }
+    );
+    obs.observe(hero);
+    return () => obs.disconnect();
+  }, [pathname]);
+
+  const headerTone = onHero ? "header-transparent" : "header-primary";
   return (
-    <header className={`sticky top-0 z-50 header-primary`}>
+    <header className={`sticky top-0 z-50 ${headerTone}`}>
       <nav className="site-header page-x">
         <div className="inner w-full flex items-center justify-between h-full">
         {/* Left: logo */}

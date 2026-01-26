@@ -1,86 +1,98 @@
 import { NextResponse } from "next/server";
-import { SERVER_ENV } from "@/lib/serverEnv";
 
 export const runtime = "nodejs"; // ensure Node runtime for SMTP
 export const dynamic = "force-dynamic"; // avoid CDN caching
 
-// Simple validation helper
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === "string" && value.trim().length > 0;
+// Helpers similar to working srikar-portfolio implementation
+function missing(...keys: Array<keyof NodeJS.ProcessEnv>) {
+  const miss = keys.filter((k) => !process.env[k]);
+  return miss.length ? miss : null;
+}
+
+function boolFromEnv(v: string | undefined, fallback: boolean) {
+  if (v == null) return fallback;
+  const s = v.trim().toLowerCase();
+  return s === "1" || s === "true" || s === "yes";
+}
+
+// Minimal HTML escaper
+function escapeHtml(input: string) {
+  return input
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+// Optional health check like portfolio: GET /api/contact
+export async function GET() {
+  const miss = missing("SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS");
+  return NextResponse.json(
+    {
+      ok: !miss,
+      env: {
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        SMTP_USER: process.env.SMTP_USER ? "set" : "missing",
+        CONTACT_TO: process.env.CONTACT_TO || "(default to SMTP_USER)",
+      },
+      note: miss ? `Missing env: ${miss.join(", ")}` : "envs look OK",
+    },
+    { status: miss ? 500 : 200 },
+  );
 }
 
 export async function POST(req: Request) {
   try {
-    // Support both JSON (from fetch) and form POSTs
-    let name = "";
-    let email = "";
-    let subject = "";
-    let message = "";
-
+    // Parse both JSON and form posts
     const contentType = req.headers.get("content-type") || "";
-    if (contentType.includes("application/json")) {
-      const body = await req.json().catch(() => ({}));
-      name = (body?.name ?? "").toString();
-      email = (body?.email ?? "").toString();
-      subject = (body?.subject ?? "").toString();
-      message = (body?.message ?? "").toString();
-    } else {
-      const form = await req.formData();
-      name = (form.get("name") ?? "").toString();
-      email = (form.get("email") ?? "").toString();
-      subject = (form.get("subject") ?? "").toString();
-      message = (form.get("message") ?? "").toString();
+    const isJson = contentType.includes("application/json");
+    const body: any = isJson ? await req.json().catch(() => ({})) : Object.fromEntries((await req.formData()).entries());
+
+    const name = String(body?.name || "").trim();
+    const email = String(body?.email || "").trim();
+    const subject = String(body?.subject || "").trim();
+    const message = String(body?.message || "").trim();
+
+    if (!name || !email || !subject || !message) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Basic validation
-    if (!isNonEmptyString(name)) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
-    }
-    if (!isNonEmptyString(email) || !/.+@.+\..+/.test(email)) {
-      return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
-    }
-    if (!isNonEmptyString(subject)) {
-      return NextResponse.json({ error: "Subject is required" }, { status: 400 });
-    }
-    if (!isNonEmptyString(message)) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 });
+    const miss = missing("SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS");
+    if (miss) {
+      return NextResponse.json({ error: `Email transport not configured`, missing: miss }, { status: 500 });
     }
 
-    // Config captured at build time (works on Amplify when using Hosting env vars)
-    const SMTP_HOST = SERVER_ENV.SMTP_HOST;
-    const SMTP_PORT = Number(SERVER_ENV.SMTP_PORT || 587);
-    const SMTP_USER = SERVER_ENV.SMTP_USER;
-    const SMTP_PASS = SERVER_ENV.SMTP_PASS;
-    const SMTP_SECURE = String(SERVER_ENV.SMTP_SECURE || "false").toLowerCase() === "true" || SMTP_PORT === 465;
-    const CONTACT_TO = SERVER_ENV.CONTACT_TO || "victoryinvolumes@gmail.com";
-    const FROM_EMAIL = SERVER_ENV.SMTP_FROM || SMTP_USER || `no-reply@${SMTP_HOST ?? "localhost"}`;
+    // Read env at runtime (works on AWS like portfolio)
+    const SMTP_HOST = process.env.SMTP_HOST as string;
+    const SMTP_PORT = Number(process.env.SMTP_PORT);
+    const SMTP_USER = process.env.SMTP_USER as string;
+    const SMTP_PASS = process.env.SMTP_PASS as string;
+    const SMTP_SECURE = boolFromEnv(process.env.SMTP_SECURE, SMTP_PORT === 465);
+    const CONTACT_TO = (process.env.CONTACT_TO as string | undefined) || SMTP_USER || "victoryinvolumes@gmail.com";
+    const FROM_EMAIL = (process.env.SMTP_FROM as string | undefined) || SMTP_USER || `no-reply@${SMTP_HOST}`;
 
-    const missing: string[] = [];
-    if (!SMTP_HOST) missing.push("SMTP_HOST");
-    if (!SMTP_PORT) missing.push("SMTP_PORT");
-    if (!SMTP_USER) missing.push("SMTP_USER");
-    if (!SMTP_PASS) missing.push("SMTP_PASS");
-    if (missing.length) {
-      return NextResponse.json(
-        {
-          error: "Email transport is not configured.",
-          missing,
-        },
-        { status: 500 },
-      );
-    }
-
-    // Lazy import nodemailer to ensure server-only usage
+    // Lazy import to keep on server only
     const { default: nodemailer } = await import("nodemailer");
-    const transporter = nodemailer.createTransport({
+
+    const commonOpts = {
       host: SMTP_HOST,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+      logger: false,
+      debug: false,
+      connectionTimeout: 20_000,
+      greetingTimeout: 15_000,
+      socketTimeout: 30_000,
+      tls: { servername: SMTP_HOST },
+    } as const;
+
+    // Primary transport based on env
+    const primary = nodemailer.createTransport({
+      ...commonOpts,
       port: SMTP_PORT,
       secure: SMTP_SECURE,
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-      },
-    });
+    } as any);
 
     const mailSubject = `[Victory] ${subject}`;
     const text = `New message from Victory contact form\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
@@ -95,27 +107,32 @@ export async function POST(req: Request) {
       </div>
     `;
 
-    await transporter.sendMail({
+    const mail = {
       to: CONTACT_TO,
       from: FROM_EMAIL,
       subject: mailSubject,
       text,
       html,
       replyTo: email,
-    });
+    } as any;
+
+    try {
+      await primary.sendMail(mail);
+    } catch (e) {
+      // Fallback to 587 STARTTLS (some environments block 465)
+      const fallback = nodemailer.createTransport({
+        ...commonOpts,
+        port: 587,
+        secure: false,
+        requireTLS: true,
+      } as any);
+      await fallback.sendMail(mail);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("/api/contact error", err);
-    return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
+    const msg = err instanceof Error ? err.message : "Failed to send message";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
-}
-
-function escapeHtml(input: string) {
-  return input
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }

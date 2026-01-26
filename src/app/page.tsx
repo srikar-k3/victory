@@ -7,8 +7,19 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section id="hero" className="section section-hero section-hero-xl scroll-mt-24 bg-[var(--c-primary)] relative">
-          <div className="inner max-w-3xl center-prose stack stack-loose text-[var(--c-light)]">
+      <section id="hero" className="section section-hero section-hero-xl scroll-mt-24 relative overflow-hidden">
+        {/* Background image */}
+        <Image
+          src="/hero_background.png"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center select-none"
+          sizes="100vw"
+        />
+        {/* Color overlay for legibility */}
+        <div className="absolute inset-0 bg-[var(--c-primary)]/60" aria-hidden />
+        <div className="inner max-w-3xl center-prose stack stack-loose text-[var(--c-light)] relative">
           <h1 className="h1 font-semibold text-[var(--c-light)]">Empowering women. Strengthening communities.</h1>
         </div>
         {/* Bottom CTA: Learn more + bouncing chevron */}

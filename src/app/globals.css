@@ -97,6 +97,7 @@
   .site-header { height: var(--header-h); display: flex; align-items: center; padding-inline: var(--gx); }
   .header-light { background: var(--c-light); color: var(--on-light); border-bottom: 1px solid var(--border); --nav-uline: rgba(0,26,35,0.35); --nav-activeline: var(--c-dark); }
   .header-primary { background: var(--c-primary); color: var(--on-primary); border-bottom: 1px solid rgba(255,255,255,0.12); --nav-uline: var(--c-secondary); --nav-activeline: var(--c-accent); }
+  .header-transparent { background: transparent; color: var(--on-primary); border-bottom: 1px solid rgba(255,255,255,0.12); --nav-uline: rgba(255,255,255,0.6); --nav-activeline: var(--c-accent); }
 
   /* Stacks */
   .stack-tight   > * + * { margin-block-start: calc(var(--u) * 1.5); }
