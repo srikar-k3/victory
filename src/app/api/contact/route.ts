@@ -1,11 +1,27 @@
 import { NextResponse } from "next/server";
 import nodemailer, { type SendMailOptions } from "nodemailer";
+import { SERVER_ENV } from "@/lib/serverEnv";
 
 export const runtime = "nodejs"; // ensure Node runtime (not Edge)
 export const dynamic = "force-dynamic"; // avoid caching for health check
 
-function missing(...keys: Array<keyof NodeJS.ProcessEnv>) {
-  const miss = keys.filter((k) => !process.env[k]);
+type EnvKey =
+  | "SMTP_HOST"
+  | "SMTP_PORT"
+  | "SMTP_USER"
+  | "SMTP_PASS"
+  | "SMTP_SECURE"
+  | "SMTP_FROM"
+  | "CONTACT_TO";
+
+function envOrBuild(key: EnvKey): string | undefined {
+  const runtime = process.env[key];
+  const baked = (SERVER_ENV as Record<string, string | undefined>)[key];
+  return runtime ?? baked ?? undefined;
+}
+
+function missing(...keys: EnvKey[]) {
+  const miss = keys.filter((k) => !envOrBuild(k));
   return miss.length ? `Missing env: ${miss.join(", ")}` : null;
 }
 
@@ -22,10 +38,10 @@ export async function GET() {
     {
       ok: !err,
       env: {
-        SMTP_HOST: process.env.SMTP_HOST,
-        SMTP_PORT: process.env.SMTP_PORT,
-        SMTP_USER: process.env.SMTP_USER ? "set" : "missing",
-        CONTACT_TO: process.env.CONTACT_TO || "(default to SMTP_USER)",
+        SMTP_HOST: envOrBuild("SMTP_HOST") ? "set" : "missing",
+        SMTP_PORT: envOrBuild("SMTP_PORT") || null,
+        SMTP_USER: envOrBuild("SMTP_USER") ? "set" : "missing",
+        CONTACT_TO: envOrBuild("CONTACT_TO") || "(default to SMTP_USER)",
       },
       note: err ?? "envs look OK",
     },
@@ -62,14 +78,14 @@ export async function POST(req: Request) {
     }
 
     // Safe, narrowed copies after the env check above
-    const SMTP_HOST = process.env.SMTP_HOST as string;
-    const SMTP_PORT = Number(process.env.SMTP_PORT);
-    const SMTP_USER = process.env.SMTP_USER as string;
-    const SMTP_PASS = process.env.SMTP_PASS as string;
+    const SMTP_HOST = envOrBuild("SMTP_HOST") as string;
+    const SMTP_PORT = Number(envOrBuild("SMTP_PORT"));
+    const SMTP_USER = envOrBuild("SMTP_USER") as string;
+    const SMTP_PASS = envOrBuild("SMTP_PASS") as string;
     const CONTACT_TO = (process.env.CONTACT_TO as string | undefined) ?? SMTP_USER;
 
     const secureByPort = SMTP_PORT === 465;
-    const secureEnv = boolFromEnv(process.env.SMTP_SECURE, secureByPort);
+    const secureEnv = boolFromEnv(envOrBuild("SMTP_SECURE"), secureByPort);
 
     const commonOpts = {
       host: SMTP_HOST,
