@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type EventItem = { title: string; subtitle: string };
 
@@ -11,7 +11,7 @@ export default function EventsTimeline({ events }: { events: EventItem[] }) {
   const [visible, setVisible] = useState(1);
   const [step, setStep] = useState(320);
 
-  const updateLayout = () => {
+  const updateLayout = useCallback(() => {
     const vp = viewportRef.current;
     const track = trackRef.current;
     if (!vp || !track) return;
@@ -24,7 +24,7 @@ export default function EventsTimeline({ events }: { events: EventItem[] }) {
     setVisible(visibleCount);
     setStep(stepW);
     setIndex((prev) => Math.min(prev, Math.max(0, events.length - visibleCount)));
-  };
+  }, [events.length]);
 
   useEffect(() => {
     updateLayout();
@@ -32,8 +32,7 @@ export default function EventsTimeline({ events }: { events: EventItem[] }) {
     if (viewportRef.current) ro.observe(viewportRef.current);
     if (trackRef.current) ro.observe(trackRef.current);
     return () => ro.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [updateLayout]);
 
   const canPrev = index > 0;
   const canNext = index + visible < events.length;
