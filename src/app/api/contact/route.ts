@@ -1,4 +1,3 @@
-@@
 import { NextResponse } from "next/server";
 import nodemailer, { type SendMailOptions } from "nodemailer";
 
