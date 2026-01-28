@@ -73,7 +73,7 @@ export default function Home() {
           <h2 className="h2 font-semibold text-[var(--c-dark)]">Upcoming Events</h2>
           {(() => {
             const events = [
-              { title: "Pilates Class Fundraiser", subtitle: "February 28, 2026" },
+              { title: "Pilates Class Fundraiser", subtitle: "February 28, 2026", href: "/events/pilates-class-fundraiser" },
               { title: "Mother Daughter Care Packages", subtitle: "May (Mother’s Day) — TBD" },
             ];
             return (
@@ -86,7 +86,13 @@ export default function Home() {
                       <li key={i} className="relative">
                         <div className="absolute left-3 top-5 -translate-x-1/2 w-3 h-3 rounded-full bg-[var(--c-accent)] ring-4 ring-white" aria-hidden />
                         <article className="card-accent pl-6 pr-4 py-4">
-                          <div className="text-body font-medium">{e.title}</div>
+                          <div className="text-body font-medium">
+                            {e.href ? (
+                              <a href={e.href} className="underline underline-offset-4 decoration-current">{e.title}</a>
+                            ) : (
+                              e.title
+                            )}
+                          </div>
                           <div className="text-body-sm mt-1 text-[var(--c-primary)]">{e.subtitle}</div>
                         </article>
                       </li>

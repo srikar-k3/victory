@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
-type EventItem = { title: string; subtitle: string };
+type EventItem = { title: string; subtitle: string; href?: string };
 
 export default function EventsTimeline({ events }: { events: EventItem[] }) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -83,7 +84,15 @@ export default function EventsTimeline({ events }: { events: EventItem[] }) {
               <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[var(--c-accent)] ring-4 ring-white" aria-hidden />
               <div className={`absolute left-1/2 -translate-x-1/2 w-full ${i % 2 === 0 ? "bottom-[calc(50%+48px)]" : "top-[calc(50%+48px)]"}`}>
                 <article className="card-accent px-6 py-6 min-h-[7.5rem]">
-                  <div className="text-body font-medium">{e.title}</div>
+                  <div className="text-body font-medium">
+                    {e.href ? (
+                      <Link href={e.href} className="underline underline-offset-4 decoration-current">
+                        {e.title}
+                      </Link>
+                    ) : (
+                      e.title
+                    )}
+                  </div>
                   <div className="text-body-sm mt-1 text-[var(--c-primary)]">{e.subtitle}</div>
                 </article>
               </div>
