@@ -122,7 +122,14 @@ export default function Navbar() {
               );
             })}
           </ul>
-          <Link href="/contact" className="btn btn-donate text-body-sm leading-none inline-flex items-center self-center">Donate (coming soon)</Link>
+          <Link
+            href="https://give.endofound.org/fundraiser/6938108"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-donate text-body-sm leading-none inline-flex items-center self-center"
+          >
+            Donate Now
+          </Link>
         </div>
         </div>
       </nav>
@@ -149,8 +156,14 @@ export default function Navbar() {
               );
             })}
             <li>
-              <Link href="/contact" className="btn btn-donate w-full" onClick={() => setOpen(false)}>
-                Donate (coming soon)
+              <Link
+                href="https://give.endofound.org/fundraiser/6938108"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-donate w-full"
+                onClick={() => setOpen(false)}
+              >
+                Donate Now
               </Link>
             </li>
           </ul>

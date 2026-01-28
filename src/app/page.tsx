@@ -115,7 +115,14 @@ export default function Home() {
             <p className="text-body text-neutral-600 prose-measure">
             These donations directly support our initiatives and research that focus on women’s health, from education and preventive care to access to treatment and wellness resources. 
             </p>
-            <a className="btn btn-primary w-fit" href="#contact">Donate (coming soon)</a>
+            <a
+              className="btn btn-primary w-fit"
+              href="https://give.endofound.org/fundraiser/6938108"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Donate Now
+            </a>
           </div>
         </div>
       </section>
