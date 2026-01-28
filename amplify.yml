@@ -6,27 +6,27 @@ frontend:
         - npm ci --cache .npm --prefer-offline || npm ci
         # Capture secrets into a server-only .env.local so Next can read them at build time
         - |
-          cat > .env.local <<'EOF'
-          SMTP_HOST=${{secrets.SMTP_HOST}}
-          SMTP_PORT=${{secrets.SMTP_PORT}}
-          SMTP_USER=${{secrets.SMTP_USER}}
-          SMTP_PASS=${{secrets.SMTP_PASS}}
-          SMTP_SECURE=${{secrets.SMTP_SECURE}}
-          SMTP_FROM=${{secrets.SMTP_FROM}}
-          CONTACT_TO=${{secrets.CONTACT_TO}}
+          cat > .env.local <<EOF
+          SMTP_HOST=$SMTP_HOST
+          SMTP_PORT=$SMTP_PORT
+          SMTP_USER=$SMTP_USER
+          SMTP_PASS=$SMTP_PASS
+          SMTP_SECURE=$SMTP_SECURE
+          SMTP_FROM=$SMTP_FROM
+          CONTACT_TO=$CONTACT_TO
           EOF
         # Also bake a JSON that we import ONLY in server code as a fallback
         - mkdir -p src/lib
         - |
-          cat > src/lib/bakedEnv.json <<'EOF'
+          cat > src/lib/bakedEnv.json <<EOF
           {
-            "SMTP_HOST": "${{secrets.SMTP_HOST}}",
-            "SMTP_PORT": "${{secrets.SMTP_PORT}}",
-            "SMTP_USER": "${{secrets.SMTP_USER}}",
-            "SMTP_PASS": "${{secrets.SMTP_PASS}}",
-            "SMTP_SECURE": "${{secrets.SMTP_SECURE}}",
-            "SMTP_FROM": "${{secrets.SMTP_FROM}}",
-            "CONTACT_TO": "${{secrets.CONTACT_TO}}"
+            "SMTP_HOST": "$SMTP_HOST",
+            "SMTP_PORT": "$SMTP_PORT",
+            "SMTP_USER": "$SMTP_USER",
+            "SMTP_PASS": "$SMTP_PASS",
+            "SMTP_SECURE": "$SMTP_SECURE",
+            "SMTP_FROM": "$SMTP_FROM",
+            "CONTACT_TO": "$CONTACT_TO"
           }
           EOF
     build:

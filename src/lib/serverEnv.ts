@@ -16,13 +16,20 @@ type Key =
 
 let baked: Partial<Record<Key, string>> = {};
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   baked = require("./bakedEnv.json");
 } catch {
   baked = {};
 }
 
-const pick = (k: Key) => process.env[k] ?? baked[k];
+const clean = (v: string | undefined) => {
+  if (!v) return undefined;
+  // Treat unexpanded placeholders like ${{...}} as missing
+  if (v.includes("${{")) return undefined;
+  return v;
+};
+
+const pick = (k: Key) => clean(process.env[k] ?? baked[k]);
 
 export const SERVER_ENV = {
   SMTP_HOST: pick("SMTP_HOST"),
