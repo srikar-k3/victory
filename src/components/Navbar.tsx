@@ -128,7 +128,7 @@ export default function Navbar() {
             rel="noopener noreferrer"
             className="btn btn-donate text-body-sm leading-none inline-flex items-center self-center"
           >
-            Donate Now
+            Donate
           </Link>
         </div>
         </div>
@@ -163,7 +163,7 @@ export default function Navbar() {
                 className="btn btn-donate w-full"
                 onClick={() => setOpen(false)}
               >
-                Donate Now
+                Donate
               </Link>
             </li>
           </ul>

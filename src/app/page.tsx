@@ -60,8 +60,7 @@ export default function Home() {
           <div className="stack-split">
             <h2 className="h2 font-semibold">Mission Statement</h2>
             <p className="text-body text-neutral-600 prose-measure">
-            Victory in Volumes exists to bring communities together in support of women’s health and well-being. Through collective voices, shared resources, and compassionate action, we strive to empower women, address their unique needs, and create lasting impact that uplifts individuals, families, and communities alike.
-
+            Victory in Volumes exists to bring communities together in support of women’s health and well-being. Through collective voices and proactive action, we strive to address the disparities in medical awareness and create lasting impacts that uplift individuals and communities alike.
             </p>
             <a className="btn btn-primary w-fit" href="/about#about-us">Learn More</a>
           </div>
@@ -74,11 +73,8 @@ export default function Home() {
           <h2 className="h2 font-semibold text-[var(--c-dark)]">Upcoming Events</h2>
           {(() => {
             const events = [
-              { title: "Mother Daughter Care Packages", subtitle: "May (Mother’s Day) — TBD" },
-              { title: "Breast Cancer Awareness 5K/Walk", subtitle: "October — TBD" },
               { title: "Pilates Class Fundraiser", subtitle: "Women’s National History Month — TBD" },
-              { title: "Backpack Drive", subtitle: "August — TBD" },
-              { title: "Fibroid", subtitle: "July — TBD" },
+              { title: "Mother Daughter Care Packages", subtitle: "May (Mother’s Day) — TBD" },
             ];
             return (
               <>
@@ -121,7 +117,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Donate Now
+              Donate
             </a>
           </div>
         </div>

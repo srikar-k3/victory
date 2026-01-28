@@ -64,7 +64,7 @@ export default function AboutPage() {
           <div className="stack-split">
             <h2 className="h2 font-semibold">Mission Statement</h2>
             <p className="text-body text-neutral-700 prose-measure">
-              Victory in Volumes exists to bring communities together in support of women’s health and well‑being. Through collective voices, shared resources, and compassionate action, we strive to empower women, address their unique needs, and create lasting impact that uplifts individuals, families, and communities alike.
+              Victory in Volumes exists to bring communities together in support of women’s health and well-being. Through collective voices and proactive action, we strive to address the disparities in medical awareness and create lasting impacts that uplift individuals and communities alike.
             </p>
             <a
               href="https://give.endofound.org/fundraiser/6938108"
@@ -72,7 +72,7 @@ export default function AboutPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Donate Now
+              Donate
             </a>
           </div>
         </div>
