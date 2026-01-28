@@ -82,7 +82,7 @@ export async function POST(req: Request) {
     const SMTP_PORT = Number(envOrBuild("SMTP_PORT"));
     const SMTP_USER = envOrBuild("SMTP_USER") as string;
     const SMTP_PASS = envOrBuild("SMTP_PASS") as string;
-    const CONTACT_TO = (process.env.CONTACT_TO as string | undefined) ?? SMTP_USER;
+    const CONTACT_TO = (envOrBuild("CONTACT_TO") as string | undefined) ?? SMTP_USER;
 
     const secureByPort = SMTP_PORT === 465;
     const secureEnv = boolFromEnv(envOrBuild("SMTP_SECURE"), secureByPort);
