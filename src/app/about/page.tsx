@@ -102,12 +102,11 @@ export default function AboutPage() {
                     <p className="text-xs text-neutral-500">Co-Founder, Co-Director</p>
                   </div>
                   <p className="text-sm text-neutral-700">
-                    Advaitha Kamalakkanan recently graduated from Rutgers University–New Brunswick
-                    with a degree in Molecular Biology &amp; Biochemistry. Her aspirations to pursue
-                    medicine continue to guide her work and advocacy. During her undergraduate
-                    years, her experiences working at an OBGYN clinic deepened her interest in
-                    advancing public awareness of women’s health and the unique challenges women
-                    face in accessing care.
+                    Advaitha Kamalakkanan graduated from Rutgers University–New Brunswick with a
+                    degree in Molecular Biology &amp; Biochemistry. As she currently pursues a
+                    career in medicine, her passion for service continues to shape the
+                    organization into a space that brings people together for the united purpose of
+                    improving women’s health and well-being.
                   </p>
                   <p className="text-sm text-neutral-700">
                     Advaitha co-founded this nonprofit with Kaitlyn while in high school, during
