@@ -22,7 +22,7 @@ export default function PilatesEventPage() {
                 community, and make a difference in the lives of those affected by this condition.
               </p>
               <p className="mt-3 text-sm sm:text-base leading-7 text-neutral-700 max-w-none">
-                Registration will be available soon. Sign up for our newsletter below to get updates. In the meantime, please use the Donate button in the navigation bar to support this cause.
+                Registration will be available soon. Sign up for our newsletter below to stay updated, and please consider supporting the cause by using the &quot;Donate&quot; link.
               </p>
             </div>
           </div>
