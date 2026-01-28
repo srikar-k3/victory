@@ -10,8 +10,8 @@ export default function AboutPage() {
         <div className="inner grid gap-8">
           <h1 className="font-semibold text-center">About Us</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            <div>
-              <p className="text-sm sm:text-base leading-7 text-neutral-700">
+            <div className="md:col-span-2">
+              <p className="text-sm sm:text-base leading-7 text-neutral-700 max-w-none">
                 Victory in Volumes was originally started in the midst of COVID-19 and was
                 dedicated to collecting your used books and redistributing them to children who
                 love to read. We had ties to multiple organizations across the nation to donate our
@@ -20,7 +20,7 @@ export default function AboutPage() {
                 shifted to focusing on an issue that many women face: a limited knowledge and
                 understanding in women’s health.
               </p>
-              <p className="mt-3 text-sm sm:text-base leading-7 text-neutral-700">
+              <p className="mt-3 text-sm sm:text-base leading-7 text-neutral-700 max-w-none">
                 Victory in Volumes is now focused on building a community that advocates for
                 women’s health and well-being. We host several events throughout the year
                 dedicated to supporting women through every stage of life — from young adulthood
@@ -30,18 +30,7 @@ export default function AboutPage() {
                 that advocates for healthier, more connected communities.
               </p>
             </div>
-            <div>
-              <div className="relative rounded-md overflow-hidden aspect-[4/3]">
-                <Image
-                  src="/about_prev.jpeg"
-                  alt="About Victory in Volumes"
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  priority
-                />
-              </div>
-            </div>
+            {/* Image removed per request */}
           </div>
         </div>
       </section>
