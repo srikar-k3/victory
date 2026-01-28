@@ -41,7 +41,8 @@ export async function GET() {
         SMTP_HOST: envOrBuild("SMTP_HOST") ? "set" : "missing",
         SMTP_PORT: envOrBuild("SMTP_PORT") || null,
         SMTP_USER: envOrBuild("SMTP_USER") ? "set" : "missing",
-        CONTACT_TO: envOrBuild("CONTACT_TO") || "(default to SMTP_USER)",
+        SMTP_FROM: envOrBuild("SMTP_FROM") ? "set" : "missing",
+        CONTACT_TO: envOrBuild("CONTACT_TO") || "(default to SMTP_FROM or SMTP_USER)",
       },
       note: err ?? "envs look OK",
     },
@@ -82,7 +83,8 @@ export async function POST(req: Request) {
     const SMTP_PORT = Number(envOrBuild("SMTP_PORT"));
     const SMTP_USER = envOrBuild("SMTP_USER") as string;
     const SMTP_PASS = envOrBuild("SMTP_PASS") as string;
-    const CONTACT_TO = (envOrBuild("CONTACT_TO") as string | undefined) ?? SMTP_USER;
+    const SMTP_FROM = envOrBuild("SMTP_FROM") as string | undefined;
+    const CONTACT_TO = (envOrBuild("CONTACT_TO") as string | undefined) ?? SMTP_FROM ?? SMTP_USER;
 
     const secureByPort = SMTP_PORT === 465;
     const secureEnv = boolFromEnv(envOrBuild("SMTP_SECURE"), secureByPort);
@@ -105,8 +107,9 @@ export async function POST(req: Request) {
       secure: secureEnv,
     });
 
+    const fromAddress = SMTP_FROM ?? SMTP_USER;
     const mail: SendMailOptions = {
-      from: `"${name}" <${SMTP_USER}>`,
+      from: `"${name}" <${fromAddress}>`,
       to: CONTACT_TO,
       replyTo: email,
       subject: `Portfolio Contact — ${workType || "General"}`,
