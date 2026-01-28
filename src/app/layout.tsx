@@ -9,12 +9,13 @@ const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-int
 const sora = Sora({ subsets: ["latin"], display: "swap", variable: "--font-sora", weight: ["400","500","600","700"] });
 
 export const metadata: Metadata = {
-  title: "Victory",
+  title: "Victory in Volumes",
   description: "Empowering women. Strengthening communities.",
   icons: {
-    icon: "/profile-picture.png",
-    shortcut: "/profile-picture.png",
-    apple: "/profile-picture.png",
+    // Add a version query to bust persistent favicon caches after deploys
+    icon: "/profile-picture.png?v=2",
+    shortcut: "/profile-picture.png?v=2",
+    apple: "/profile-picture.png?v=2",
   },
 };
 

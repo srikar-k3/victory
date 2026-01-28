@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 
 const navItems = [
@@ -16,10 +16,9 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const [hash, setHash] = useState<string>("");
-  const [alpha, setAlpha] = useState(() => {
-    if (typeof window !== "undefined" && window.location.pathname === "/" && window.scrollY <= 2) return 0;
-    return 1;
-  }); // 0 = transparent, 1 = solid
+  const headerRef = useRef<HTMLElement | null>(null);
+  // Start transparent by default to avoid an initial solid flash on home
+  const [alpha, setAlpha] = useState(0); // 0 = transparent, 1 = solid
 
   // Track URL hash for active nav state
   useEffect(() => {
@@ -30,6 +29,21 @@ export default function Navbar() {
       return () => window.removeEventListener("hashchange", update);
     }
   }, []);
+
+  // Compute an accurate initial alpha before paint
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return;
+    if (pathname !== "/") {
+      setAlpha(1);
+      return;
+    }
+    const hero = document.getElementById("hero");
+    if (!hero) {
+      setAlpha(1);
+      return;
+    }
+    setAlpha(window.scrollY <= 2 ? 0 : 1);
+  }, [pathname]);
 
   // Observe the hero on the home page to drive a smooth fade
   useEffect(() => {
@@ -47,8 +61,8 @@ export default function Navbar() {
     if (window.scrollY <= 2) setAlpha(0);
 
     const thresholds = Array.from({ length: 21 }, (_, i) => i / 20);
-    const headerEl = document.querySelector("header");
-    const headerH = headerEl ? Math.round((headerEl as HTMLElement).getBoundingClientRect().height) : 64;
+    const headerEl = headerRef.current ?? (document.querySelector("header") as HTMLElement | null);
+    const headerH = headerEl ? Math.round(headerEl.getBoundingClientRect().height) : 64;
     const obs = new IntersectionObserver(
       ([entry]) => {
         const ratio = entry.intersectionRatio; // 0..1 visible portion of hero
@@ -71,7 +85,7 @@ export default function Navbar() {
   const headerStyle = { "--header-alpha": String(alpha) } as CSSProperties;
 
   return (
-    <header className={`sticky top-0 z-50 header-dynamic`} style={headerStyle}>
+    <header ref={headerRef} className={`sticky top-0 z-50 header-dynamic`} style={headerStyle}>
       <nav className="site-header page-x">
         <div className="inner w-full flex items-center justify-between h-full">
         {/* Left: logo */}
@@ -79,7 +93,7 @@ export default function Navbar() {
           <span className="relative inline-block w-8 h-8 shrink-0">
             <Image
               src="/profile-picture.png"
-              alt="Victory logo"
+              alt="Victory in Volumes logo"
               fill
               sizes="32px"
               className="rounded-md object-cover"

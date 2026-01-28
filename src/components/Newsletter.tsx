@@ -55,9 +55,7 @@ export default function Newsletter({
               {status === "submitting" ? "Subscribing…" : "Subscribe"}
             </button>
           </form>
-          {status === "success" && (
-            <div className="text-green-600 text-body-sm mt-2">Check your email to confirm your subscription.</div>
-          )}
+          {/* Success message intentionally removed per request */}
         </div>
       </div>
     </section>

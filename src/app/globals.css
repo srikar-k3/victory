@@ -104,10 +104,10 @@
     border-bottom: 1px solid rgba(255,255,255,0.12);
     --nav-uline: rgba(255,255,255,0.6);
     --nav-activeline: var(--c-accent);
-    /* Fallback */
-    background-color: rgba(97, 9, 36, var(--header-alpha, 1));
+    /* Fallback: default to transparent until JS sets --header-alpha */
+    background-color: rgba(97, 9, 36, var(--header-alpha, 0));
     /* Modern smooth mix */
-    background-color: color-mix(in oklab, transparent calc(100% - (var(--header-alpha, 1) * 100%)), var(--c-primary) calc(var(--header-alpha, 1) * 100%));
+    background-color: color-mix(in oklab, transparent calc(100% - (var(--header-alpha, 0) * 100%)), var(--c-primary) calc(var(--header-alpha, 0) * 100%));
     transition: background-color .28s ease, color .28s ease, border-color .28s ease;
   }
 

@@ -109,7 +109,7 @@ export default function Home() {
           <div className="stack-split">
             <h2 className="h2 font-semibold">Contribute Directly</h2>
             <p className="text-body text-neutral-600 prose-measure">
-            These donations directly support our initiatives and research that focus on women’s health, from education and preventive care to access to treatment and wellness resources. 
+            These donations directly support our initiatives and research that focus on women’s health, from education and preventive care to access to treatment and wellness resources. Our upcoming fundraiser is in direct support of Endofound which is an organization dedicated to supporting research in Endometriosis...
             </p>
             <a
               className="btn btn-primary w-fit"
