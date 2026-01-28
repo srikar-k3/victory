@@ -14,7 +14,10 @@ export default function Newsletter({
   subscribeUrl?: string;
 }) {
   const defaultBase = "https://victoryinvolumes.substack.com";
-  const base = subscribeUrl ?? process.env.NEXT_PUBLIC_SUBSTACK_URL ?? defaultBase;
+  const rawBase = subscribeUrl ?? defaultBase; // hard-coded preferred; ignore env to avoid misconfig 404s
+  const base = rawBase.startsWith("http://") || rawBase.startsWith("https://")
+    ? rawBase
+    : `https://${rawBase}`;
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
 

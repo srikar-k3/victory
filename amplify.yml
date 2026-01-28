@@ -14,7 +14,6 @@ frontend:
           SMTP_SECURE=$SMTP_SECURE
           SMTP_FROM=$SMTP_FROM
           CONTACT_TO=$CONTACT_TO
-          NEXT_PUBLIC_SUBSTACK_URL=$NEXT_PUBLIC_SUBSTACK_URL
           EOF
         # Also bake a JSON that we import ONLY in server code as a fallback
         - mkdir -p src/lib
