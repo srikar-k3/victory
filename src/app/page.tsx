@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section id="hero" className="section section-hero section-hero-xl scroll-mt-24 relative">
+      <section id="hero" className="section section-hero section-hero-xl scroll-mt-24 relative bg-[var(--c-primary)] grid place-items-center min-h-[70vh]">
         {/* Background extends behind sticky header without shifting content */}
         <div
           className="absolute left-0 right-0 pointer-events-none"
@@ -26,8 +26,8 @@ export default function Home() {
             <div className="absolute inset-0 bg-[var(--c-primary)]/60" />
           </div>
         </div>
-        <div className="inner max-w-3xl center-prose stack stack-loose text-[var(--c-light)] relative">
-          <h1 className="h1 font-semibold text-[var(--c-light)]">Empowering women. Strengthening communities.</h1>
+        <div className="inner stack stack-loose text-[var(--c-light)] relative text-center mx-auto max-w-[22ch] sm:max-w-3xl">
+          <h1 className="font-semibold text-[var(--c-light)] text-[clamp(28px,7vw,40px)] sm:text-[clamp(44px,2.2rem+2.2vw,64px)] leading-[1.15]">Empowering women. Strengthening communities.</h1>
         </div>
         {/* Bottom CTA: Learn more + bouncing chevron */}
         <div className="absolute left-1/2 -translate-x-1/2 bottom-6 flex flex-col items-center gap-2 text-[var(--c-light)]">
@@ -57,7 +57,7 @@ export default function Home() {
               priority
             />
           </div>
-          <div className="stack-split">
+          <div className="stack-split text-center sm:text-left">
             <h2 className="h2 font-semibold">Mission Statement</h2>
             <p className="text-body text-neutral-600 prose-measure">
             Victory in Volumes exists to bring communities together in support of women’s health and well-being. Through collective voices and proactive action, we strive to address the disparities in medical awareness and create lasting impacts that uplift individuals and communities alike.
@@ -73,7 +73,7 @@ export default function Home() {
           <h2 className="h2 font-semibold text-[var(--c-dark)]">Upcoming Events</h2>
           {(() => {
             const events = [
-              { title: "Pilates Class Fundraiser", subtitle: "Women’s National History Month — TBD" },
+              { title: "Pilates Class Fundraiser", subtitle: "February 28, 2026" },
               { title: "Mother Daughter Care Packages", subtitle: "May (Mother’s Day) — TBD" },
             ];
             return (
@@ -106,7 +106,7 @@ export default function Home() {
       <section id="feature-2" className="section section-main scroll-mt-24">
         <div className="inner grid items-center md:grid-cols-2 md:[&>div:nth-child(1)]:order-2 gap-[calc(var(--g2)*2)] md:gap-[calc(var(--g3)*2)]">
           <div className="media aspect-[4/3]" />
-          <div className="stack-split">
+          <div className="stack-split text-center sm:text-left">
             <h2 className="h2 font-semibold">Contribute Directly</h2>
             <p className="text-body text-neutral-600 prose-measure">
             These donations directly support our initiatives and research that focus on women’s health, from education and preventive care to access to treatment and wellness resources. Our upcoming fundraiser is in direct support of Endofound which is an organization dedicated to supporting research in Endometriosis.
